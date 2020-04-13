@@ -63,12 +63,7 @@
         </span>
       </el-dialog>
       <!-- 编辑用户dialog -->
-      <el-dialog
-        title="编辑用户"
-        :show-close="false"
-        :visible.sync="editDialog"
-        width="30%"
-      >
+      <el-dialog title="编辑用户" :show-close="false" :visible.sync="editDialog" width="30%">
         <el-form
           :model="editObj"
           :rules="rules"
@@ -113,7 +108,6 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import { mapState, mapMutations } from "vuex";
 const rightsModule = createNamespacedHelpers("Rights");
 const {
   mapState: rightState,
@@ -157,18 +151,17 @@ export default {
     treeLevel
   },
   methods: {
-    // 公共模块
-    ...mapMutations(['setEditObj']),
     ...rightActions([
       "getAllRight",
       "getAllRoles",
       "delRole",
       "addRoles",
       "editRoles",
-      "alloRights"
+      "alloRights",
+      "getById"
       // 'getOneRole'
     ]),
-    ...rightMutations([ "setEditRightsArr"]),
+    ...rightMutations(["setEditRightsArr"]),
     // 表格展开行触发的方法
     shwoRights(row) {
       this.setEditObj(row);
@@ -180,9 +173,8 @@ export default {
     // },
     // 打开编辑框
     editInfo(info) {
-      // this.$refs[formName].resetFields();
       this.editDialog = true;
-      this.setEditObj(info);
+      this.getById(info.id);
     },
     // 删除dilog打开
     delInfo(info) {
@@ -209,10 +201,13 @@ export default {
       this.setEditRightsArr(infos.children);
     },
     // 取消(添加)按钮
-    cancel(formNames) {
+    cancel(formName) {
       this.editDialog = false;
       this.addDialog = false;
       this.alloDialog = false;
+      if (formName) {
+        this.$refs[formName].resetFields();
+      }
     },
     // 新增角色确定按钮
     addconfirm(formName) {
@@ -271,8 +266,7 @@ export default {
   },
   watch: {},
   computed: {
-    ...mapState(['editObj']),
-    ...rightState(["rolesArr", "treeRights", "editRightsArr"]),
+    ...rightState(["rolesArr", "treeRights", "editRightsArr", "editObj"]),
     ...rightGetters(["rightsIdArr", "nowIdArr"])
   },
   filters: {}

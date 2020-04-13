@@ -14,7 +14,9 @@ export default {
         // 接收所有的权限(tree)
         treeRights: [],
         // 当前选中用户的权限列表
-        editRightsArr: []
+        editRightsArr: [],
+        // 当前选中的角色(商品、用户)
+        editObj: {},
     },
     mutations: {
         // 角色信息的处理
@@ -36,7 +38,12 @@ export default {
         setEditRightsArr(state, data) {
             state.editRightsArr = data
                 // console.log(state.editRightsArr);
-        }
+        },
+        // 当前角色的处理
+        setEditObj(state, data) {
+            state.editObj = data
+            console.log(state.editObj);
+        },
     },
     actions: {
         // 获取所有的角色列表
@@ -68,6 +75,17 @@ export default {
             if (res.meta.status === 200) {
                 Message.success('修改成功')
                 dispatch('getAllRoles')
+            }
+        },
+        // 根据id查询角色
+        async getById({ commit }, id) {
+            try {
+                let res = await api.getRoleById(id)
+                if (res.meta.status === 200) {
+                    commit('setEditObj', res.data)
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         // 获取所有权限列表

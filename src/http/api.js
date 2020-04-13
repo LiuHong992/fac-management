@@ -89,8 +89,13 @@ export default {
     // 商品分类管理
     // 获取商品分类数据列表
     // type:[1,2,3] pagenum:当前页码值 pagesize:每页显示多少条数据
-    getGoodsCategories(type, pagenum, pagesize) {
-        return service.get(`categories?type=${type}&pagenum=${pagenum}&pagesize=${pagesize}`)
+    getGoodsCategories({ pagenum, pagesize, type }) {
+        if (pagenum && pagesize) {
+            return service.get(`categories?pagenum=${pagenum}&pagesize=${pagesize}&type=${type}`)
+        } else {
+            return service.get(`categories?type=${type}`)
+        }
+
     },
     // 添加分类
     // @params cat_pid:分类父ID(不能为空,如果要添加1级分类,则父分类Id应该设置为0) 
@@ -111,31 +116,35 @@ export default {
         return service.delete(`categories/${id}`)
     },
 
-    // 分类参数管理
+    // 分类参数管理(id为分类ID)
     // 参数列表
     // sel:[only,many] 通过 only 或 many 来获取分类静态参数还是动态参数
-    getAttributesList(id, sel) {
+    getAttributesList({ id, sel }) {
         return service.get(`categories/${id}/attributes?sel=${sel}`)
     },
     // 添加动态参数或者静态属性
     // @params attr_name:参数名称 attr_sel:[only,many] attr_vals:如果是 many 就需要填写值的选项，以逗号分隔
-    addAttributes(id, params) {
-        return service.post(`categories/${id}/attributes`, params)
+    addAttributes({ id, attr_name, attr_sel, attr_vals }) {
+        if (!attr_vals) {
+            return service.post(`categories/${id}/attributes`, { attr_name, attr_sel })
+        } else {
+            return service.post(`categories/${id}/attributes`, { attr_name, attr_sel, attr_vals })
+        }
     },
     // 删除参数
     // attrid:参数 ID
-    deleteAttributes(id, attrid) {
+    deleteAttributes({ id, attrid }) {
         return service.delete(`categories/${id}/attributes/${attrid}`)
     },
     // 根据ID查询参数
     // attr_sel:[only,many] attr_vals:如果是many就需要填写值的选项，以逗号分隔
-    getAttributesById(id, attrid, attr_sel, attr_vals) {
+    getAttributesById({ id, attrid, attr_sel, attr_vals }) {
         return service.get(`categories/${id}/attributes/${attrid}?attr_sel=${attr_sel}&attr_vals=${attr_vals}`)
     },
     // 编辑提交参数
     // @params attr_name:新属性的名字 attr_sel:属性的类型[many或only] attr_vals:参数的属性值
-    editAttributes({ id, attrid, params }) {
-        return service.put(`categories/${id}/attributes/${attrid}`, params)
+    editAttributes({ id, attrid, attr_name, attr_sel, attr_vals }) {
+        return service.put(`categories/${id}/attributes/${attrid}`, { attr_name, attr_sel, attr_vals })
     },
 
     // 商品管理(id均为商品id)

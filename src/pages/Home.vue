@@ -46,12 +46,14 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 const homeMudule = createNamespacedHelpers("Home");
+const goodsModule = createNamespacedHelpers("Goods");
 const {
   mapState: homeState,
   mapActions: homeActions,
   mapGetters: homeGetters,
   mapMutations: homeMutations
 } = homeMudule;
+const { mapMutations: goodMutations } = goodsModule;
 import config from "../config/index";
 import homeAside from "../components/Home/homeAside";
 import commonTag from "../components/Home/commonTag";
@@ -130,6 +132,7 @@ export default {
   },
   methods: {
     ...homeActions(["getAllMenu"]),
+    ...goodMutations(["setParamsArr"]),
     // 请求天气
     getWeather() {
       let nowHour = new Date().getHours();
@@ -186,7 +189,14 @@ export default {
       this.timer = null;
     }
   },
-  watch: {},
+  watch: {
+    // 商品管理中的分类参数数组清空操作
+    "$route.path"(path) {
+      if (path !== "/goods/params") {
+        this.setParamsArr([]);
+      }
+    }
+  },
   computed: {
     ...homeState(["rightsList"]),
     ...homeGetters(["getNewRightsList"])

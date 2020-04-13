@@ -183,7 +183,6 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import { mapState, mapMutations } from "vuex";
 const userModule = createNamespacedHelpers("User");
 const rightsModule = createNamespacedHelpers("Rights");
 const {
@@ -260,8 +259,6 @@ export default {
     pagination
   },
   methods: {
-    // 公共模块
-    ...mapMutations(["setEditObj"]),
     // 用户模块
     ...userActions([
       "getUsersList",
@@ -269,7 +266,8 @@ export default {
       "updateInfo",
       "delUser",
       "addUsers",
-      "assignRole"
+      "assignRole",
+      "getById"
     ]),
     ...userMutations(["setUsersArr"]),
     // 权限模块
@@ -289,25 +287,16 @@ export default {
     // 打开编辑框
     editInfo(info) {
       this.editDialog = true;
-      this.setEditObj(info);
+      this.getById(info.id);
     },
-    // 编辑框关闭的回调
-    // closeItem(formName) {
-    //   this.$refs[formName].resetFields();
-    // },
     // 取消(添加)按钮
     cancel(formNames) {
       this.editDialog = false;
       this.addDialog = false;
       this.alloDialog = false;
-      let obj = {};
-      this.setEditObj(obj);
-      console.log(this.usersArr);
-      setTimeout(() => {
-        if (formNames) {
-          this.$refs[formNames].resetFields();
-        }
-      }, 20);
+      if (formNames) {
+        this.$refs[formNames].resetFields();
+      }
     },
     // 编辑角色点击确定时触发的事件
     confirm(formName) {
@@ -409,8 +398,7 @@ export default {
   },
   watch: {},
   computed: {
-    ...mapState(["editObj"]),
-    ...userState(["usersArr"]),
+    ...userState(["usersArr", "editObj"]),
     // 权限模块数据
     ...rightsState(["rolesArr"])
   },

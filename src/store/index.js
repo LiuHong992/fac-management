@@ -4,23 +4,35 @@ import User from './User/index'
 import Home from './Home/index'
 import Rights from './Rights/index'
 import Goods from './Goods/index'
+import api from '../http/api'
 
 Vue.use(Vuex)
 
 // 只放公共的状态
 export default new Vuex.Store({
     state: {
-        // 当前选中的角色(商品、用户)
-        editObj: {},
+        // 报表数据
+        reportsData: {}
     },
     mutations: {
-        // 当前用户的处理
-        setEditObj(state, data) {
-            state.editObj = data
-            console.log(state.editObj);
-        },
+        // 报表数据处理
+        setReportsData(state, data) {
+            state.reportsData = data
+        }
     },
-    actions: {},
+    actions: {
+        // 请求报表数据
+        async getReports({ commit }) {
+            try {
+                let res = await api.getLineChart()
+                if (res) {
+                    commit('setReportsData', res.data)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    },
     modules: {
         User,
         Home,

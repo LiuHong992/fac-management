@@ -47,7 +47,6 @@ export default {
       // tabList: [],
       // 当前路由路径
       activeUrl: "",
-
       dragOptions: { filter: ".disabled" }
     };
   },

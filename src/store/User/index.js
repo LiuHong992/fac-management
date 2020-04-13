@@ -8,12 +8,18 @@ export default {
     namespaced: true,
     state: {
         // 接收请求出来的用户列表
-        usersArr: []
+        usersArr: [],
+        // 当前选中的角色(商品、用户)
+        editObj: {},
     },
     mutations: {
         // 用户列表的处理
         setUsersArr(state, data) {
             state.usersArr = data
+        },
+        // 当前用户的处理
+        setEditObj(state, data) {
+            state.editObj = data
         },
     },
     actions: {
@@ -49,6 +55,17 @@ export default {
             let res = await api.editUserInfo({ id, email, mobile })
             if (res.meta.status === 200) {
                 Message.success(res.meta.msg)
+            }
+        },
+        // 根据id查询用户
+        async getById({ commit }, id) {
+            try {
+                let res = await api.getUserById(id)
+                if (res.meta.status === 200) {
+                    commit('setEditObj', res.data)
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         // 删除用户
