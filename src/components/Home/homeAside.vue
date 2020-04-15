@@ -8,6 +8,7 @@
       :unique-opened="true"
       :router="true"
       @select="handleSelect"
+      style="height:100%"
     >
       <el-menu-item index="/">
         <template slot="title">
@@ -108,6 +109,9 @@ export default {
   watch: {
     "$route.path"(val) {
       this.defaultAddress = val;
+      if (val === "/goods/addgoods") {
+        this.defaultAddress = "/goods/goods";
+      }
     }
   },
   computed: {

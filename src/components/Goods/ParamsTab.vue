@@ -10,7 +10,13 @@
       >添加{{selType==='many'?'参数':'属性'}}</el-button>
     </div>
     <!-- 下方的表格数据 -->
-    <el-table :data="paramsArr" style="width: 100%" @expand-change="shwoTags">
+    <el-table
+      :data="paramsArr"
+      style="width: 100%"
+      @expand-change="shwoTags"
+      row-key="attr_id"
+      :expand-row-keys="expandArr"
+    >
       <!-- index -->
       <el-table-column label="#" prop="index" width="50" align="center">
         <template slot-scope="scope">
@@ -19,24 +25,29 @@
       </el-table-column>
       <!-- 展开行 -->
       <el-table-column type="expand" width="50">
-        <el-tag
-          class="m-r-20"
-          :key="index"
-          v-for="(item,index) in valsArr"
-          closable
-          :disable-transitions="false"
-          @close="handleClose(item)"
-        >{{item}}</el-tag>
-        <el-input
-          class="input-new-tag"
-          v-if="inputVisible"
-          v-model="inputValue"
-          ref="saveTagInput"
-          size="small"
-          @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm"
-        ></el-input>
-        <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+        <template slot-scope="scope">
+          <template v-if="scope.row.attr_vals !== ''">
+            <el-tag
+              class="m-r-20 m-b-20"
+              :key="index"
+              v-for="(item,index) in scope.row.attr_vals.split(' ')"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(item,scope.row)"
+            >{{item}}</el-tag>
+          </template>
+          <el-input
+            class="input-new-tag"
+            v-if="inputNum === scope.$index"
+            v-model="inputValue"
+            ref="saveTagInput"
+            size="small"
+            @keyup.enter.native="handleInputConfirm(scope.row)"
+            @blur="handleInputConfirm(scope.row)"
+            style="width:300px"
+          ></el-input>
+          <el-button v-else class="button-new-tag" size="small" @click="showInput(scope)">+ New Tag</el-button>
+        </template>
       </el-table-column>
       <!-- 参数名称 -->
       <el-table-column label="参数名称" prop="pname" width="550" align="center">
@@ -123,9 +134,11 @@ export default {
         attr_name: ""
       },
       valsArr: [],
-      inputVisible: false,
+      inputNum: -1,
       // 添加标签输入框的值
-      inputValue: ""
+      inputValue: "",
+      // 默认展开行
+      expandArr: []
     };
   },
   props: {
@@ -159,12 +172,8 @@ export default {
     },
     // 表格展开行触发的方法
     shwoTags(row) {
-      this.valsArr = [];
+      this.expandArr.push(row.attr_id);
       this.setEditParam(row);
-      if (this.editParam.attr_vals !== "") {
-        this.valsArr = this.editParam.attr_vals.split(" ");
-      }
-      //   console.log(row);
     },
     // 表格中的新增操作
     openAdd() {
@@ -237,23 +246,58 @@ export default {
         });
     },
     // 展开行中间的删除按钮
-    handleClose(tag) {
-      this.valsArr.splice(this.valsArr.indexOf(tag), 1);
+    handleClose(tag, row) {
+      this.setEditParam(row);
+      let arr =
+        row.attr_vals === ""
+          ? row.attr_vals.split("")
+          : row.attr_vals.split(" ");
+      arr.splice(arr.indexOf(tag), 1);
+      this.confirmEditParam({
+        id: this.editParam.cat_id,
+        attrid: this.editParam.attr_id,
+        attr_name: this.editParam.attr_name,
+        attr_sel: this.selType,
+        attr_vals: arr.length === 1 ? arr.toString() : arr.join(" ")
+      });
+      setTimeout(() => {
+        this.updateParams();
+      }, 100);
     },
     // 添加标签
-    showInput() {
-      this.inputVisible = true;
+    showInput(scope) {
+      this.setEditParam(scope.row);
+      this.inputNum = scope.$index;
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
-    handleInputConfirm() {
+    // 添加标签
+    handleInputConfirm(row) {
       let inputValue = this.inputValue;
       if (inputValue) {
-        this.dynamicTags.push(inputValue);
+        let arr =
+          row.attr_vals === ""
+            ? row.attr_vals.split("")
+            : row.attr_vals.split(" ");
+        arr.push(inputValue);
+        setTimeout(() => {
+          this.confirmEditParam({
+            id: this.editParam.cat_id,
+            attrid: this.editParam.attr_id,
+            attr_name: this.editParam.attr_name,
+            attr_sel: this.selType,
+            attr_vals: arr.length === 1 ? arr.toString() : arr.join(" ")
+          });
+        }, 50);
+        setTimeout(() => {
+          this.updateParams();
+          this.inputNum = -1;
+          this.inputValue = "";
+        }, 200);
+      } else {
+        this.$message.error("添加内容不能为空");
       }
-      this.inputVisible = false;
-      this.inputValue = "";
     }
   },
   mounted() {},

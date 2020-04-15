@@ -10,7 +10,9 @@
         <el-table :data="rolesArr" border stripe style="width: 100%" @expand-change="shwoRights">
           <!-- 扩展行 -->
           <el-table-column type="expand" width="50">
-            <tree-level></tree-level>
+            <template slot-scope="scope">
+              <tree-level :treeArr="scope.row.children"></tree-level>
+            </template>
           </el-table-column>
           <!-- 编号 -->
           <el-table-column align="center" prop="index" label="#" width="50">
@@ -161,7 +163,7 @@ export default {
       "getById"
       // 'getOneRole'
     ]),
-    ...rightMutations(["setEditRightsArr"]),
+    ...rightMutations(["setEditRightsArr", "setEditObj"]),
     // 表格展开行触发的方法
     shwoRights(row) {
       this.setEditObj(row);
@@ -258,7 +260,13 @@ export default {
         rids: rightsId
       });
       this.alloDialog = false;
-    }
+    },
+    // 子组件分发回父组件的方法
+    // closeTag(data, oldVal) {
+    //   console.log(data);
+    //   console.log(oldVal);
+    //   oldVal = data;
+    // }
   },
   mounted() {
     this.getAllRoles();

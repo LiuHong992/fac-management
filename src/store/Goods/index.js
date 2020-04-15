@@ -16,7 +16,11 @@ export default {
         // 接收参数列表(动态和静态均为这个参数接收)
         paramsArr: [],
         // 当前选中的编辑项(参数)
-        editParam: {}
+        editParam: {},
+        // 接收分类总数据
+        classfyObj: {},
+        // 接收当前选中项的详细信息
+        editCategory: {}
     },
     mutations: {
         // 商品数据处理
@@ -32,6 +36,7 @@ export default {
         // 所有分类的处理
         setClassfyArr(state, data) {
             state.classfyArr = data
+            console.log(state.classfyArr);
         },
         // 参数列表信息的处理
         setParamsArr(state, data) {
@@ -40,7 +45,17 @@ export default {
         // 当前选中项的信息处理
         setEditParam(state, data) {
             state.editParam = data
-            console.log(state.editParam);
+                // console.log(state.editParam);
+        },
+        // 分类总数据的处理
+        setClassfyObj(state, data) {
+            state.classfyObj = data
+                // console.log(state.classfyObj);
+        },
+        // 当前分类数据的处理
+        setEditCategory(state, data) {
+            state.editCategory = data
+            console.log(state.editCategory);
         }
     },
     actions: {
@@ -79,11 +94,18 @@ export default {
         },
         // 分类参数相关请求
         // 获取分类列表
-        async getClassfies({ commit }, { type }) {
+        async getClassfies({ commit }, { pagenum, pagesize, type }) {
             try {
-                let res = await api.getGoodsCategories({ type })
-                if (res.meta.status === 200) {
-                    commit('setClassfyArr', res.data)
+                if (pagenum && pagesize) {
+                    let res = await api.getGoodsCategories({ pagenum, pagesize, type })
+                    if (res.meta.status === 200) {
+                        commit('setClassfyObj', res.data)
+                    }
+                } else {
+                    let res = await api.getGoodsCategories({ type })
+                    if (res.meta.status === 200) {
+                        commit('setClassfyArr', res.data)
+                    }
                 }
             } catch (err) {
                 console.log(err);
@@ -145,12 +167,53 @@ export default {
             } catch (err) {
                 console.log(err);
             }
+        },
+
+        //商品分类相关接口
+        // 根据id查询相关分类
+        async getCategoryByIds({ commit }, id) {
+            try {
+                let res = await api.getCategoryById(id)
+                if (res.meta.status === 200) {
+                    commit('setEditCategory', res.data)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        // 修改分类
+        async changeCategory({ commit }, { id, cat_name }) {
+            try {
+                let res = await api.editCategory({ id, cat_name })
+                if (res.meta.status === 200) {
+                    Message.success(res.meta.msg)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        // 添加分类
+        async addCategories({ commit }, { cat_pid, cat_name, cat_level }) {
+            try {
+                let res = await api.addCategory({ cat_pid, cat_name, cat_level })
+                if (res.meta.status === 201) {
+                    Message.success(res.meta.msg)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        // 删除分类
+        async delCategory({ commit }, id) {
+            try {
+                let res = await api.deleteCategory(id)
+                if (res.meta.status === 200) {
+                    Message.success(res.meta.msg)
+                }
+            } catch (err) {
+                console.log(err);
+            }
         }
     },
-    getters: {
-        // valsArr(state) {
-        //     let arr = state.editParam.attr_vals.split(' ')
-        //     return arr
-        // }
-    },
+    getters: {},
 }

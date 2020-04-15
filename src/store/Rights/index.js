@@ -111,6 +111,7 @@ export default {
         async delOneRight({ commit, dispatch }, { roleId, rightId }) {
             let res = await api.deleteRoleRight({ roleId, rightId })
             if (res.meta.status === 200) {
+                // console.log(res.data);
                 Message.success('删除权限成功')
                 commit('setEditRightsArr', res.data)
             }

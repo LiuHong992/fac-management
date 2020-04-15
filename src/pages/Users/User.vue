@@ -7,7 +7,7 @@
           <!-- 搜索框 -->
           <div class="search-wrapper m-r-20">
             <el-input placeholder="请输入搜索内容" v-model="uSearch">
-              <el-button slot="append" icon="el-icon-search"></el-button>
+              <el-button slot="append" icon="el-icon-search" @click="getUsers"></el-button>
             </el-input>
           </div>
           <!-- 添加用户按钮 -->
@@ -269,7 +269,7 @@ export default {
       "assignRole",
       "getById"
     ]),
-    ...userMutations(["setUsersArr"]),
+    ...userMutations(["setUsersArr", "setEditObj"]),
     // 权限模块
     ...rightsActions(["getAllRoles"]),
     // 更新数据的方法
@@ -294,6 +294,7 @@ export default {
       this.editDialog = false;
       this.addDialog = false;
       this.alloDialog = false;
+      this.selectRole = "";
       if (formNames) {
         this.$refs[formNames].resetFields();
       }

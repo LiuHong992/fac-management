@@ -100,19 +100,19 @@ export default {
     // 添加分类
     // @params cat_pid:分类父ID(不能为空,如果要添加1级分类,则父分类Id应该设置为0) 
     //         cat_name:分类名称 cat_level:分类层级
-    addCategory(params) {
-        return service.post('categories', params)
+    addCategory({ cat_pid, cat_name, cat_level }) {
+        return service.post('categories', { cat_pid, cat_name, cat_level })
     },
     // 根据id查询分类
     getCategoryById(id) {
         return service.get(`categories/${id}`)
     },
     // 编辑提交分类
-    editCategory(id, { cat_name }) {
+    editCategory({ id, cat_name }) {
         return service.put(`categories/${id}`, { cat_name })
     },
     // 删除分类
-    deleteCategory() {
+    deleteCategory(id) {
         return service.delete(`categories/${id}`)
     },
 
@@ -201,7 +201,7 @@ export default {
     // user_id:用户 ID, pay_status:支付状态, is_send:是否发货
     // order_fapiao_title:['个人','公司'], order_fapiao_company:公司名称
     // order_fapiao_content:发票内容, consignee_addr:发货地址
-    getOrderList(pagenum, pagesize, query) {
+    getOrderList({ pagenum, pagesize, query }) {
         return service.get(`orders?pagenum=${pagenum}&pagesize=${pagesize}&query=${query}`)
     },
     // 修改订单状态

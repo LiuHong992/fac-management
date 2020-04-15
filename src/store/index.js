@@ -4,6 +4,7 @@ import User from './User/index'
 import Home from './Home/index'
 import Rights from './Rights/index'
 import Goods from './Goods/index'
+import Order from './Order/index'
 import api from '../http/api'
 
 Vue.use(Vuex)
@@ -37,6 +38,7 @@ export default new Vuex.Store({
         User,
         Home,
         Rights,
-        Goods
+        Goods,
+        Order
     }
 })

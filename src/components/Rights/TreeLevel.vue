@@ -1,8 +1,8 @@
 <template>
   <div class="treelevel-wrapper">
-    <div class="treelevel-content" v-if="editRightsArr.length>0">
+    <div class="treelevel-content" v-if="treeArr.length>0">
       <!-- 模板 -->
-      <div class="level fl a-c" v-for="(item,index) in editRightsArr" :key="index">
+      <div class="level fl a-c" v-for="(item,index) in treeArr" :key="index">
         <!-- 一级权限 -->
         <div class="level-one f-1 a-c">
           <el-tag closable @close="closeTag(item)">{{item.authName}}</el-tag>
@@ -50,7 +50,12 @@ export default {
   data() {
     return {};
   },
-  props: {},
+  props: {
+    treeArr: {
+      type: Array,
+      default: () => []
+    }
+  },
   components: {},
   methods: {
     ...rightActions(["delOneRight"]),
@@ -66,6 +71,8 @@ export default {
             roleId: this.editObj.id,
             rightId: tag.id
           });
+          // this.treeArr = this.editRightsArr
+          // this.$emit('closeTag',this.editRightsArr)
         })
         .catch(() => {
           this.$message({

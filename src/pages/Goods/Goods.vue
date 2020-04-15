@@ -6,12 +6,12 @@
         <!-- 搜索框 -->
         <div class="search-wrapper m-r-20">
           <el-input clearable placeholder="请输入搜索内容" v-model="gSearch">
-            <el-button slot="append" icon="el-icon-search" @click="searchGoods"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="getGoods"></el-button>
           </el-input>
         </div>
-        <!-- 添加用户按钮 -->
+        <!-- 添加商品按钮 -->
         <div class="btn">
-          <el-button type="primary" @click="addDialog = true">添加商品</el-button>
+          <el-button type="primary" @click="goToAddGoods">添加商品</el-button>
         </div>
       </div>
       <!-- 表格数据 -->
@@ -116,12 +116,14 @@
 <script>
 import dayjs from "dayjs";
 import { createNamespacedHelpers } from "vuex";
+const homeMudule = createNamespacedHelpers("Home");
 const goodsModule = createNamespacedHelpers("Goods");
 const {
   mapState: goodState,
   mapActions: goodActions,
   mapMutations: goodMutations
 } = goodsModule;
+const { mapState: homeState, mapMutations: homeMutations } = homeMudule;
 import pagination from "../../components/User/Pagination";
 export default {
   data() {
@@ -158,6 +160,8 @@ export default {
   },
   methods: {
     ...goodActions(["getGoodsLists", "delGood", "getById"]),
+    // 首页模块
+    ...homeMutations(["setTabList"]),
     // ...goodMutations(["setEditObj"]),
     // 更新数据的方法
     getGoods() {
@@ -166,10 +170,6 @@ export default {
         pagesize: this.pagesize,
         query: this.gSearch
       });
-    },
-    // 搜索框方法
-    searchGoods() {
-      this.getGoods();
     },
     // 分页组件分发回父组件的改变最大页数的方法
     changeSize(e) {
@@ -184,6 +184,31 @@ export default {
       setTimeout(() => {
         this.getGoods();
       }, 50);
+    },
+    // 跳转到添加商品页面
+    goToAddGoods() {
+      let obj = {
+        name: "添加商品",
+        url: "/goods/addgoods"
+      };
+      let flag = true;
+      this.tabList.map(item => {
+        if (item.name === obj.name) {
+          flag = false;
+        }
+      });
+      if (flag) {
+        this.tabList.push(obj);
+        setTimeout(() => {
+          this.setTabList(this.tabList);
+        }, 20);
+        setTimeout(() => {
+          this.$router.push(obj.url);
+          localStorage.setItem("tabList", JSON.stringify(this.tabList));
+        }, 50);
+      } else {
+        this.$router.push(obj.url);
+      }
     },
     // 编辑操作
     editInfo(info) {
@@ -231,10 +256,14 @@ export default {
   },
   mounted() {
     this.getGoods();
+    // if (localStorage.getItem("tabList")) {
+    //   this.setTabList(JSON.parse(localStorage.getItem("tabList")));
+    // }
   },
   watch: {},
   computed: {
-    ...goodState(["goodsObj", "editObj"])
+    ...goodState(["goodsObj", "editObj"]),
+    ...homeState(["tabList"])
   },
   filters: {
     formatTime(data) {

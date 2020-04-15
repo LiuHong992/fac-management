@@ -13,10 +13,12 @@
     "core-js": "^3.6.4",
     "dayjs": "^1.8.23",
     "echarts": "^4.7.0",
+    "element-china-area-data": "^4.1.2",
     "element-ui": "^2.13.0",
     "nprogress": "^0.2.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.6",
+    "vue-table-with-tree-grid": "^0.2.4",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.1.3"
   },

@@ -78,6 +78,20 @@ const routes = [
                 import ('../pages/Goods/Goods')
         }]
     },
+    // 添加商品
+    {
+        path: '/goods/addgoods',
+        component: Home,
+        children: [{
+            path: '',
+            name: 'addgoods',
+            meta: {
+                title: '添加商品'
+            },
+            component: () =>
+                import ('../pages/Goods/AddGoods')
+        }]
+    },
     // 分类列表
     {
         path: '/goods/params',
