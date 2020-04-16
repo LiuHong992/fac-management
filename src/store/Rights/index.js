@@ -42,7 +42,6 @@ export default {
         // 当前角色的处理
         setEditObj(state, data) {
             state.editObj = data
-            console.log(state.editObj);
         },
     },
     actions: {

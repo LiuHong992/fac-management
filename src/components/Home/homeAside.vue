@@ -100,7 +100,11 @@ export default {
   },
   mounted() {
     if (this.$route.path) {
-      this.defaultAddress = this.$route.path;
+      if (this.$route.path === "/goods/addgoods") {
+        this.defaultAddress = "/goods/goods";
+      } else {
+        this.defaultAddress = this.$route.path;
+      }
     }
     if (localStorage.getItem("tabList")) {
       this.setTabList(JSON.parse(localStorage.getItem("tabList")));

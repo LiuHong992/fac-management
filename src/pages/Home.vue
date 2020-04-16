@@ -23,7 +23,7 @@
               <div class="uname">{{userInfo.username}}</div>
             </div>
             <!-- 退出系统 -->
-            <div class="loginout">退出</div>
+            <div class="loginout" @click="loginOut">退出</div>
           </div>
         </div>
       </el-header>
@@ -132,6 +132,7 @@ export default {
   },
   methods: {
     ...homeActions(["getAllMenu"]),
+    ...homeMutations(["setTabList"]),
     ...goodMutations(["setParamsArr"]),
     // 请求天气
     getWeather() {
@@ -155,6 +156,29 @@ export default {
         })
         .catch(err => {
           console.log(err);
+        });
+    },
+    // 退出登录
+    loginOut() {
+      this.$confirm("您确定退出登录吗?", "退出提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          localStorage.removeItem("userData");
+          localStorage.removeItem("tabList");
+          this.setTabList([{ name: "首页", url: "/" }]);
+          setTimeout(() => {
+            this.$router.push("/login");
+            this.$message.success("欢迎下次光临");
+          }, 200);
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消退出"
+          });
         });
     }
   },
@@ -231,6 +255,7 @@ export default {
         }
       }
       .loginout {
+        cursor: pointer;
         margin-left: 12px;
         color: skyblue;
       }

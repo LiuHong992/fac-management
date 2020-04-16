@@ -36,7 +36,7 @@ export default {
         // 所有分类的处理
         setClassfyArr(state, data) {
             state.classfyArr = data
-            console.log(state.classfyArr);
+                // console.log(state.classfyArr);
         },
         // 参数列表信息的处理
         setParamsArr(state, data) {
@@ -65,6 +65,19 @@ export default {
                 let res = await api.getGoodsList({ pagenum, pagesize, query })
                 if (res.meta.status === 200) {
                     commit('setGoodsObj', res.data)
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        // 添加商品
+        async addGoodsItem({ commit }, params) {
+            try {
+                let res = await api.addGoods(params)
+                console.log(res);
+                if (res.meta.status === 201) {
+                    Message.success(res.meta.msg)
+                    router.push('/goods/goods')
                 }
             } catch (err) {
                 console.log(err);
